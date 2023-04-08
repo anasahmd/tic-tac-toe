@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  margin: 10rem auto;
+  width: min(500px, 85vw);
+  height: min(500px, 85vw);
+  border: 1px solid #333;
+}
+
+.square {
+  border: 1px solid #333;
+  font-size: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.fa-circle {
+  font-size: 4rem;
+}

@@ -2,56 +2,51 @@ const squares = document.querySelectorAll('.square');
 
 for (let square of squares) {
   square.addEventListener('click', () => {
-    game.addMark(square);
+    if (game.getActivePlayer().role == 'bot') return;
+    game.playChance(square);
   });
 }
 
-function Gameboard() {
-  let gameboard = [];
+function gameBoard() {
+  let board = [];
 
   for (let i = 0; i < 9; i++) {
-    gameboard[i] = Cell();
+    board[i] = cell(i);
   }
 
-  const getBoard = () => gameboard;
-  return gameboard;
+  const getEmptyCells = () =>
+    board.filter((cell) => cell.getValue() == 0).map((cell) => cell.getIndex());
+  return { board, getEmptyCells };
 }
 
-function Cell() {
+function cell(i) {
   let value = 0;
-
+  let index = i;
   const addToken = (player) => {
     value = player;
   };
 
   const getValue = () => value;
 
-  return { addToken, getValue };
+  const getIndex = () => index;
+
+  return { addToken, getValue, getIndex };
 }
 
-// function Player() {
-//     const playerX = (role) => {
-
-//     }
-
-//     const playerO = (role) => {
-
-//     }
-// }
+function Player(name, role, mark) {
+  this.name = name;
+  this.role = role;
+  this.mark = mark;
+}
 
 function GameController() {
-  const gameboard = Gameboard();
+  const gameboard = gameBoard();
 
-  const players = [
-    {
-      mark: 'X',
-      icon: 'fa-solid fa-xmark',
-    },
-    {
-      mark: 'O',
-      icon: 'fa-regular fa-circle',
-    },
-  ];
+  let players = [];
+
+  players[0] = new Player('Anas', 'bot', 'X');
+
+  players[1] = new Player('Jarvis', 'user', 'O');
 
   let activePlayer = players[0];
 
@@ -75,13 +70,13 @@ function GameController() {
       .filter((combination) => combination.includes(pos))
       .some((combination) =>
         combination.every(
-          (cell) => gameboard[cell].getValue() === activePlayer.mark
+          (cell) => gameboard.board[cell].getValue() === activePlayer.mark
         )
       );
   };
 
-  const addMark = (square) => {
-    const pos = gameboard[square.dataset.pos];
+  const playChance = (square) => {
+    const pos = gameboard.board[square.dataset.pos];
 
     if (pos.getValue() !== 0) return;
 
@@ -94,13 +89,37 @@ function GameController() {
     }
 
     switchActivePlayer();
+
+    if (activePlayer.role == 'bot') {
+      const play = setTimeout(botPlay(), 500);
+    }
   };
 
   const updateSquare = (square) => {
-    square.children[0].className = activePlayer.icon;
+    if (activePlayer.mark == 'X') {
+      square.children[0].className = 'fa-solid fa-xmark';
+    } else {
+      square.children[0].className = 'fa-regular fa-circle';
+    }
   };
 
-  return { addMark, updateSquare };
+  const botPlay = () => {
+    const emptyCells = gameboard.getEmptyCells();
+
+    let ran = Math.floor(Math.random() * emptyCells.length - 1);
+
+    let cell = emptyCells.splice(ran, 1);
+
+    setTimeout(playChance, 1000, squares[cell[0]]);
+  };
+
+  const getActivePlayer = () => activePlayer;
+
+  return { playChance, getActivePlayer, botPlay };
 }
 
 const game = GameController();
+
+if (game.getActivePlayer().role == 'bot') {
+  game.botPlay();
+}

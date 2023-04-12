@@ -12,27 +12,22 @@ function gameBoard() {
   let board = [];
 
   for (let i = 0; i < 9; i++) {
-    board[i] = cell(i);
+    board[i] = new Cell(i);
   }
 
   const getEmptyCells = () =>
-    board.filter((cell) => cell.getValue() == 0).map((cell) => cell.getIndex());
+    board.filter((cell) => cell.value == 0).map((cell) => cell.index);
   return { board, getEmptyCells };
 }
 
-function cell(i) {
-  let value = 0;
-  let index = i;
-  const addMark = (player) => {
-    value = player;
-  };
-
-  const getValue = () => value;
-
-  const getIndex = () => index;
-
-  return { addMark, getValue, getIndex };
+function Cell(i) {
+  this.value = 0;
+  this.index = i;
 }
+
+Cell.prototype.addMark = function (playerMark) {
+  this.value = playerMark;
+};
 
 function Player(name, role, mark) {
   this.name = name;
@@ -69,20 +64,20 @@ function GameController() {
       [2, 4, 6],
     ];
 
-    if (gameboard.getEmptyCells().length == 0) {
-      return 'draw';
-    }
+    //First filters out positions that were not part of the move, then checks if
 
     const result = winCombinations
       .filter((combination) => combination.includes(pos))
       .some((combination) =>
         combination.every(
-          (cell) => gameboard.board[cell].getValue() === activePlayer.mark
+          (cell) => gameboard.board[cell].value === activePlayer.mark
         )
       );
 
     if (result) {
       return 'win';
+    } else if (gameboard.getEmptyCells().length == 0) {
+      return 'draw';
     } else {
       return false;
     }
@@ -95,7 +90,7 @@ function GameController() {
 
     const pos = gameboard.board[square.dataset.pos];
 
-    if (pos.getValue() !== 0) return;
+    if (pos.value !== 0) return;
 
     pos.addMark(activePlayer.mark);
     updateSquare(square);
@@ -122,8 +117,10 @@ function GameController() {
   const winHandler = (res) => {
     if (res == 'win') {
       result.innerText = `${activePlayer.name} Wins`;
+      gameOver = true;
     } else if (res == 'draw') {
       result.innerText = `It's a draw!`;
+      gameOver = true;
     }
   };
 

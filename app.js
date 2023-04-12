@@ -1,4 +1,5 @@
 const squares = document.querySelectorAll('.square');
+const result = document.querySelector('.result');
 
 for (let square of squares) {
   square.addEventListener('click', () => {
@@ -22,7 +23,7 @@ function gameBoard() {
 function cell(i) {
   let value = 0;
   let index = i;
-  const addToken = (player) => {
+  const addMark = (player) => {
     value = player;
   };
 
@@ -30,7 +31,7 @@ function cell(i) {
 
   const getIndex = () => index;
 
-  return { addToken, getValue, getIndex };
+  return { addMark, getValue, getIndex };
 }
 
 function Player(name, role, mark) {
@@ -42,11 +43,13 @@ function Player(name, role, mark) {
 function GameController() {
   const gameboard = gameBoard();
 
+  let gameOver = false;
+
   let players = [];
 
-  players[0] = new Player('Anas', 'bot', 'X');
+  players[0] = new Player('Anas', 'user', 'X');
 
-  players[1] = new Player('Jarvis', 'user', 'O');
+  players[1] = new Player('Jarvis', 'bot', 'O');
 
   let activePlayer = players[0];
 
@@ -66,27 +69,40 @@ function GameController() {
       [2, 4, 6],
     ];
 
-    return winCombinations
+    if (gameboard.getEmptyCells().length == 0) {
+      return 'draw';
+    }
+
+    const result = winCombinations
       .filter((combination) => combination.includes(pos))
       .some((combination) =>
         combination.every(
           (cell) => gameboard.board[cell].getValue() === activePlayer.mark
         )
       );
+
+    if (result) {
+      return 'win';
+    } else {
+      return false;
+    }
   };
 
   const playChance = (square) => {
+    if (gameOver) {
+      return;
+    }
+
     const pos = gameboard.board[square.dataset.pos];
 
     if (pos.getValue() !== 0) return;
 
-    pos.addToken(activePlayer.mark);
+    pos.addMark(activePlayer.mark);
     updateSquare(square);
 
-    if (checkWinner(square.dataset.pos)) {
-      console.log(activePlayer.mark);
-      return;
-    }
+    let winResult = checkWinner(square.dataset.pos);
+
+    winHandler(winResult);
 
     switchActivePlayer();
 
@@ -100,6 +116,14 @@ function GameController() {
       square.children[0].className = 'fa-solid fa-xmark';
     } else {
       square.children[0].className = 'fa-regular fa-circle';
+    }
+  };
+
+  const winHandler = (res) => {
+    if (res == 'win') {
+      result.innerText = `${activePlayer.name} Wins`;
+    } else if (res == 'draw') {
+      result.innerText = `It's a draw!`;
     }
   };
 

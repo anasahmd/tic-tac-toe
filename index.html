@@ -16,7 +16,17 @@
   </head>
   <body>
     <main>
-      <div class="game-grid">
+      <div class="choose-mode">
+        <p>Choose mode:</p>
+        <div class="pvp mode-div">
+          <button class="mode-button" data-mode="pvp">Player vs Player</button>
+        </div>
+        <div class="pvb mode-div">
+          <button class="mode-button" data-mode="pvb">Player vs AI</button>
+        </div>
+      </div>
+
+      <div class="game-grid hidden">
         <div class="square" data-pos="0"><i></i></div>
         <div class="square" data-pos="1"><i></i></div>
         <div class="square" data-pos="2"><i></i></div>

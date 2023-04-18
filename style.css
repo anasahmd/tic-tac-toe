@@ -7,6 +7,44 @@
   font-family: 'Inter', sans-serif;
 }
 
+main {
+  width: 85%;
+  margin: 0 auto;
+}
+
+.choose-mode {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 3rem;
+  font-weight: 500;
+}
+
+.choose-mode p {
+  font-size: 1.75rem;
+}
+
+.mode-div {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.mode-button {
+  border: none;
+  background-color: #0a4d68;
+  cursor: pointer;
+  color: white;
+  padding: 1.5rem;
+  width: 15rem;
+  border-radius: 1.25rem;
+  max-width: 85vw;
+  align-items: center;
+  font-weight: 500;
+  font-size: 1.125rem;
+}
+
 .game-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

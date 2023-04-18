@@ -1,10 +1,32 @@
 const squares = document.querySelectorAll('.square');
+const gameGrid = document.querySelector('.game-grid');
 const result = document.querySelector('.result');
+
+//Logic for choosing mode
+
+const modeButtons = document.querySelectorAll('.mode-button');
+for (let btn of modeButtons) {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.mode;
+    if (mode == 'pvp') {
+      game.setGameMode('player');
+    } else if (mode == 'pvb') {
+      game.setGameMode('bot');
+    }
+    btn.parentElement.parentElement.classList.add('hidden');
+    gameGrid.classList.remove('hidden');
+  });
+}
+
+const signButtons = document.querySelectorAll('.sign-button');
+for (let btn of signButtons) {
+  btn.addEventListener('click', () => {});
+}
 
 for (let square of squares) {
   square.addEventListener('click', () => {
     if (game.getActivePlayer().role == 'bot') return;
-    game.playChance(square);
+    game.playMove(square);
   });
 }
 
@@ -39,14 +61,23 @@ function GameController() {
   const gameboard = gameBoard();
 
   let gameOver = false;
+  let activePlayer;
 
   let players = [];
 
-  players[0] = new Player('Anas', 'user', 'X');
+  const setGameMode = (mode) => {
+    console.log(mode);
+    if (mode == 'player') {
+      players[0] = new Player('Player X', 'player', 'X');
 
-  players[1] = new Player('Jarvis', 'bot', 'O');
+      players[1] = new Player('Player O', 'player', 'O');
+    } else if (mode == 'bot') {
+      players[0] = new Player('Player', 'player', 'X');
 
-  let activePlayer = players[0];
+      players[1] = new Player('Bot', 'bot', 'O');
+    }
+    activePlayer = players[0];
+  };
 
   const switchActivePlayer = () =>
     (activePlayer = activePlayer === players[0] ? players[1] : players[0]);
@@ -83,7 +114,7 @@ function GameController() {
     }
   };
 
-  const playChance = (square) => {
+  const playMove = (square) => {
     if (gameOver) {
       return;
     }
@@ -131,16 +162,16 @@ function GameController() {
 
     let cell = emptyCells.splice(ran, 1);
 
-    setTimeout(playChance, 1000, squares[cell[0]]);
+    setTimeout(playMove, 1000, squares[cell[0]]);
   };
 
   const getActivePlayer = () => activePlayer;
 
-  return { playChance, getActivePlayer, botPlay };
+  return { playMove, getActivePlayer, botPlay, setGameMode };
 }
 
 const game = GameController();
 
-if (game.getActivePlayer().role == 'bot') {
+if (game.getActivePlayer() && game.getActivePlayer().role == 'bot') {
   game.botPlay();
 }

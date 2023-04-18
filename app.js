@@ -66,7 +66,6 @@ function GameController() {
   let players = [];
 
   const setGameMode = (mode) => {
-    console.log(mode);
     if (mode == 'player') {
       players[0] = new Player('Player X', 'player', 'X');
 
@@ -95,7 +94,7 @@ function GameController() {
       [2, 4, 6],
     ];
 
-    //First filters out positions that were not part of the move, then checks if
+    //First filters out positions that were not part of the move, then checks if all the combination contains the mark
 
     const result = winCombinations
       .filter((combination) => combination.includes(pos))
